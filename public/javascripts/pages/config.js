@@ -2,10 +2,11 @@
 function notify(text, type) {
   if (!text) return $('#notify').hide();
   type = type || 'info';
+  $('#notify .message').html(text);
   $('#notify')
     .removeClass()
-    .addClass('alert alert-' + type)
-    .html(text);
+    .addClass('span8 alert alert-' + type)
+    .show();
 }
 
 function removeWebHooks(repo_url, next) {
@@ -31,34 +32,24 @@ window.app = angular.module('config', [], function ($interpolateProvider) {
 
 app.controller('Config', ['$scope', '$element', function ($scope, $element, $attributes) {
   // this is the parent controller.
-  $scope.repo_config = JSON.parse($element.get('data-repo-config') || '{}');
-  $scope.repo_url = $scope.repo_config.repo_url;
-  $scope.panelData = window.plugin_data;
-}]);
-
-app.controller('CollaboratorsCtrl', ['$scope', function ($scope) {
-  $scope.collaborators = $scope.panelData.collaborators;
-}]);
-
-app.controller('GithubCtrl', ['$scope', function ($scope) {
-  $scope.removeWebhooks = function () {
-    bootbox.confirm('Really remove the github webhooks? If you only want to temporarily disable build on commit, go to the "activate" tab', 'Just kidding', 'Yes, really', function (result) {
-      if (!result) return
-      // XXXX remove it.
-      removeWebhooks($scope.repo_url);
-    });
+  $scope.repo = JSON.parse($element.attr('data-repo-config') || '{}');
+  $scope.panelData = JSON.parse($element.attr('data-panel-data') || '{}');
+  $scope.gravatar = function (email) {
+    var hash = md5(email.toLowerCase());
+    return 'https://secure.gravatar.com/avatar/' + hash + '?d=identicon';
+  }
+  $scope.message = notify;
+  $scope.error = function (text) {
+    notify(text, 'error');
+  };
+  $scope.info = function (text) {
+    notify(text, 'info');
+  };
+  $scope.success = function (text) {
+    notify('<strong>Done.</strong> ' + text, 'success');
+  };
+  $scope.hideMessage = function () {
+    $('#notify').hide();
   };
 }]);
 
-app.controller('HerokuCtrl', ['$scope', function ($scope) {
-  $scope.heroku_apps = null;
-  $scope.existing_app = null;
-}]);
-
-app.controller('WebhooksCtrl', ['$scope', function ($scope) {
-  $scope.hooks = [];
-}]);
-
-app.controller('DeactivateCtrl', ['$scope', function ($scope) {
-  $scope.active = true;
-}]);
