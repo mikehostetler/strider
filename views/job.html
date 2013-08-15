@@ -10,7 +10,9 @@
     </div>
   </div>
   <div class='job-main'>
-    {% include "partials/_build.html" %}
+		{% pluginblock JobMain %}
+			{% include "partials/_build.html" %}
+		{% endpluginblock %}
   </div>
 </div>
       {% pluginblock AfterJobPage %}{% endpluginblock %}

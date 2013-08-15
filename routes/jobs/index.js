@@ -221,7 +221,7 @@ exports.job = function(req, res)
             admin_view: false,
             jobs: results,
             results_detail: results_detail,
-            job_id:results[0].id.substr(0,8),
+						job_id = req.params.job_id,
             triggered_by_commit: triggered_by_commit,
             org:org,
             repo:repo,
